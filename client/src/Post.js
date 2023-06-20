@@ -7,7 +7,7 @@ const Post = () => {
         <img src="https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/12/techcrunch-website-homepage.webp" />
       </div>
       <div className="texts">
-        <h2>TechCrunch</h2>
+        <h2>Cristiano scores again!</h2>
         <p className="info">
           <span className="author">Vedant Yetekar</span>
           <time>2023-02-02 02:00</time>
