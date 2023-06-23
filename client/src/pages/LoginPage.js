@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../UserContext";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { setUserInfo } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -13,11 +17,21 @@ const LoginPage = () => {
 
   const login = async (e) => {
     e.preventDefault();
-    await fetch("http://localhost:5000/login", {
+    const response = await fetch("http://localhost:5000/login", {
       method: "POST",
       body: JSON.stringify({ username, password }),
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
     });
+
+    if (response.ok) {
+      response.json().then((userInfo) => {
+        setUserInfo(userInfo);
+        navigate("/");
+      });
+    } else {
+      alert("Invalid credentials.");
+    }
   };
 
   return (
