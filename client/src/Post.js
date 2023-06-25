@@ -4,7 +4,10 @@ const Post = () => {
   return (
     <div className="post">
       <div className="image">
-        <img src="https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/12/techcrunch-website-homepage.webp" />
+        <img
+          alt="article-image"
+          src="https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/12/techcrunch-website-homepage.webp"
+        />
       </div>
       <div className="texts">
         <h2>Cristiano scores again!</h2>

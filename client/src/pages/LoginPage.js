@@ -42,12 +42,14 @@ const LoginPage = () => {
         type="text"
         placeholder="username"
         value={username}
+        autoComplete="on"
       />
       <input
         onChange={handlePasswordChange}
         type="password"
         placeholder="password"
         value={password}
+        autoComplete="on"
       />
       <button>Login</button>
     </form>
