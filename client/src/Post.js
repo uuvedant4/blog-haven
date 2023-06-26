@@ -1,24 +1,22 @@
 import React from "react";
+import { formatISO9075 } from "date-fns";
 
-const Post = () => {
+const Post = ({ title, summary, cover, content, createdAt, author }) => {
+  const coverPath = `http://localhost:5000/uploads/${cover
+    .slice(8)
+    .trimRight()}`;
   return (
     <div className="post">
       <div className="image">
-        <img
-          alt="article-image"
-          src="https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/12/techcrunch-website-homepage.webp"
-        />
+        <img alt="article-image" src={coverPath} />
       </div>
       <div className="texts">
-        <h2>Cristiano scores again!</h2>
+        <h2>{title}</h2>
         <p className="info">
-          <span className="author">Vedant Yetekar</span>
-          <time>2023-02-02 02:00</time>
+          <span className="author">{author.username}</span>
+          <time>{formatISO9075(new Date(createdAt))}</time>
         </p>
-        <p className="summary">
-          TechCrunch is a blog that provides technology and startup news, from
-          the latest developments in Silicon Valley to venture capital funding.
-        </p>
+        <p className="summary">{summary}</p>
       </div>
     </div>
   );

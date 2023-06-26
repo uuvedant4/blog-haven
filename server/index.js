@@ -17,6 +17,7 @@ const upload = multer({ dest: "uploads" });
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(express.json());
 app.use(cookieParser());
+app.use("/uploads", express.static(`${__dirname}/uploads`));
 
 const PORT = process.env.PORT || 5000;
 
@@ -81,14 +82,30 @@ app.post("/post", upload.single("file"), async (req, res) => {
   const newPath = path + "." + ext;
   console.log(newPath);
   fs.renameSync(path, newPath);
-  const { title, summary, content } = req.body;
-  const newPost = await Post.create({
-    title,
-    summary,
-    content,
-    cover: newPath,
+  const { token } = req.cookies;
+  jwt.verify(token, process.env.JWT_SECRET_KEY, {}, async (error, info) => {
+    if (error) {
+      throw error;
+    }
+    const { title, summary, content } = req.body;
+    const newPost = await Post.create({
+      title,
+      summary,
+      content,
+      cover: newPath,
+      author: info.id,
+    });
+
+    res.json(newPost);
   });
-  res.json(newPost);
+});
+
+app.get("/post", async (req, res) => {
+  const posts = await Post.find()
+    .populate("author", ["username"])
+    .sort({ createdAt: -1 })
+    .limit(20);
+  res.json(posts);
 });
 
 const connectDB = async () => {
