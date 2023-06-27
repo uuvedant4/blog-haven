@@ -80,7 +80,6 @@ app.post("/post", upload.single("file"), async (req, res) => {
   const parts = originalname.split(".");
   const ext = parts[parts.length - 1];
   const newPath = path + "." + ext;
-  console.log(newPath);
   fs.renameSync(path, newPath);
   const { token } = req.cookies;
   jwt.verify(token, process.env.JWT_SECRET_KEY, {}, async (error, info) => {
@@ -97,6 +96,37 @@ app.post("/post", upload.single("file"), async (req, res) => {
     });
 
     res.json(newPost);
+  });
+});
+
+app.put("/post", upload.single("file"), async (req, res) => {
+  let newPath = null;
+  if (req.file) {
+    const { originalname, path } = req.file;
+    const parts = originalname.split(".");
+    const ext = parts[parts.length - 1];
+    newPath = path + "." + ext;
+    fs.renameSync(path, newPath);
+  }
+  const { token } = req.cookies;
+  jwt.verify(token, process.env.JWT_SECRET_KEY, {}, async (error, info) => {
+    if (error) {
+      throw error;
+    }
+    const { id, title, summary, content } = req.body;
+    const postDoc = await Post.findById(id);
+    const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(info.id);
+    if (!isAuthor) {
+      return res.status(400).json("You are not the author.");
+    }
+    await postDoc.updateOne({
+      title,
+      summary,
+      content,
+      cover: newPath ? newPath : postDoc.cover,
+    });
+
+    res.json(postDoc);
   });
 });
 
@@ -121,5 +151,11 @@ const connectDB = async () => {
       console.log(err.message);
     });
 };
+
+app.get("/post/:id", async (req, res) => {
+  const { id } = req.params;
+  const postInfo = await Post.findById(id).populate("author", ["username"]);
+  res.json(postInfo);
+});
 
 connectDB();
